@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% block content %}
+
+<p>{{ message }}</p>
+<div class="row">
+    <div class="col-sm-1">
+          </div>
+    <div class="col-sm-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Inscrivez-vous maintenant</h5>
+                {% url 'subscribe' as url_subscribe %}
+                {% bootstrap_button "S'inscrire" button_type="link" button_class="btn-primary m-2 mt-4" href=url_subscribe%}
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-1">
+          </div>
+    <div class="col-sm-4 ">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Connectez-vous</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    {% bootstrap_button "Se connecter" button_type="submit" button_class="btn-primary m-2 mt-4" %}
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+</form>
+{% endblock content %}
