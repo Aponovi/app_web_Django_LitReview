@@ -10,16 +10,16 @@ from . import forms
 def signup_page(request):
     form = UserCreationForm()
     if request.method == 'POST':
-        form = forms.UserCreationForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('login')
     context = {'form': form}
-    return render(request, 'authentification/subscribe.html', context)
+    return render(request, 'authentication/subscribe.html', context)
 
 
 class LoginPageView(View):
-    template_name = 'authentification/login.html'
+    template_name = 'authentication/login.html'
     form_class = forms.LoginForm
 
     def get(self, request):
@@ -36,6 +36,6 @@ class LoginPageView(View):
             )
             if user is not None:
                 login(request, user)
-                return redirect('home')
+                return redirect('flux')
         message = 'Identifiants invalides.'
         return render(request, self.template_name, context={'form': form, 'message': message})
