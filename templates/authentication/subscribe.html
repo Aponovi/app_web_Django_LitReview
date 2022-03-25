@@ -15,7 +15,7 @@
                 {{form.password1}}
                 {{form.password2}}
                 {% url 'login' as url_login %}
-                {% bootstrap_button "Retourner" button_type="link" button_class="btn-primary m-2 mt-4" href=url_login%}
+                {% bootstrap_button "Retour" button_type="link" button_class="btn-primary m-2 mt-4" href=url_login%}
                 {% bootstrap_button "S'inscrire" button_type="submit" button_class="btn-primary m-2 mt-4" %}
             </form>
         </div>
@@ -33,6 +33,4 @@
         form_fields.className += ' form-control'
 </script>
 {% endblock content %}
-</body>
-</html>
 
