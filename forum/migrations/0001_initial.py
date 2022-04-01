@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('headline', models.CharField(max_length=128)),
                 ('body', models.TextField(blank=True, max_length=8192)),
                 ('time_created', models.DateTimeField(auto_now_add=True)),
-                ('ticket', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.ticket')),
+                ('ticket.html', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.ticket.html')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
