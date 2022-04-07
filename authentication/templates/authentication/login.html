@@ -11,7 +11,7 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Inscrivez-vous maintenant</h5>
-                {% url 'subscribe' as url_subscribe %}
+                {% url 'authentication:subscribe' as url_subscribe %}
                 {% bootstrap_button "S'inscrire" button_type="link" button_class="btn-primary m-2 mt-4" href=url_subscribe %}
             </div>
         </div>

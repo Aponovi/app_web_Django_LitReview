@@ -27,22 +27,11 @@ class LST(ListView):
 class TicketCreation(LoginRequiredMixin, CreateView):
     template_name = 'forum/ticket.html'
     form_class = forms.TicketForm
+    success_url = reverse_lazy('forum:flux')
 
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+    def form_valid(self, form):
         form.instance.user = self.request.user
-        if form.is_valid():
-            ticket = Ticket(title=form.cleaned_data['title'],
-                            description=form.cleaned_data['description'],
-                            image=form.cleaned_data['image'],
-                            user=request.user,
-                            )
-            ticket.save()
-            return reverse_lazy('flux')
-        else:
-            return render(request, 'forum/ticket.html', {
-                'form': form
-            })
+        return super().form_valid(form)
 
 
 

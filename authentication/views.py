@@ -7,7 +7,7 @@ from .forms import SignUpForm
 
 class SignUp_page(generic.CreateView):
     template_name = 'authentication/subscribe.html'
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('authentication:login')
     form_class = SignUpForm
 
 
