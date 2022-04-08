@@ -3,9 +3,9 @@
 {% bootstrap_css %}
 {% block content %}
 
-<form method="POST" enctype="multipart/form-data">
-{% csrf_token %}
-{{form.as_p}}
-                    {% bootstrap_button "Envoyer" button_type="submit" button_class="btn-primary m-2 mt-4" %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form.as_p}}
+        {% bootstrap_button "Envoyer" button_type="submit" button_class="btn-primary m-2 mt-4" %}
 
 {% endblock content %}

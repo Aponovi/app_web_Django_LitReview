@@ -11,6 +11,7 @@ from . import forms
 
 
 def flux_page(request):
+
     return HttpResponse('<h1>Hello, world!</h1>')
 
 
@@ -19,9 +20,10 @@ def follow_page(request):
 
 
 class LST(ListView):
-    template_name = ''
+    template_name = 'forum/flux.html'
     context_object_name = 'tickets'
-    queryset = Ticket.objects.all()
+    queryset = Ticket.objects.order_by('-time_created')
+    paginate_by = '5'
 
 
 class TicketCreation(LoginRequiredMixin, CreateView):
@@ -32,7 +34,6 @@ class TicketCreation(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
-
 
 
 def review_page(request):

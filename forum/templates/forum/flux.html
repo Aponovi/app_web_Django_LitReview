@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% block content %}
+    <h2>Tickets</h2>
+        <ul>
+            {% for ticket in tickets %}
+            <li>{{ ticket.title }}</li>
+            <li>{{ ticket.time_created }}</li>
+            <li>{{ ticket.title }}</li>
+            {% endfor %}
+        </ul>
+
+{% endblock content %}
