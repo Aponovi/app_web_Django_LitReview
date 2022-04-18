@@ -1,14 +1,35 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
+<header>
     {% load bootstrap5 %}
     {% bootstrap_css %}
+    {% if request.user.is_authenticated %}
+    <nav class="navbar navbar-dark justify-content-between" style="background-color: #0086b3">
+        <a class="navbar-brand">LitReview</a>
+        <nav class="navbar navbar-expand-lg">
+            <div class="collapse navbar-collapse" id="navbarText">
+                <span class="navbar-text"> nom d'utilisateur</span>
+                <ul class="navbar-nav justify-content-end">
+                    <li class="nav-item"><a class="nav-link" href="flux">Flux</a></li>
+                    <li class="nav-item"><a class="nav-link" href="posts">Posts</a></li>
+                    <li class="nav-item"><a class="nav-link" href="follow">Abonnements</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Déconnexion</a></li>
+                </ul>
+            </div>
+        </nav>
+
+
+        {% endif %}
+
+</header>
+<head>
+    <meta charset="UTF-8">
     <title>LitReview</title>
     <h1 style="text-align:center">LitReview</h1>
 </head>
+
 <body>
-    {% block content %}
-    {% endblock content %}
+{% block content %}
+{% endblock content %}
 </body>
 </html>
