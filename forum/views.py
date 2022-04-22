@@ -19,7 +19,7 @@ def follow_page(request):
     return HttpResponse('<h1>Qui je suis! Et surtout qui me suis?</h1>')
 
 
-class LST(ListView):
+class TicketsList(ListView):
     template_name = 'forum/flux.html'
     context_object_name = 'tickets'
     queryset = Ticket.objects.order_by('-time_created')

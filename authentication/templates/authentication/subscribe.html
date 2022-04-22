@@ -28,7 +28,7 @@
                 <p>{{ error }}</p>
                 {{ form.password2.help_text }}
                 {% endfor %}
-                {% url 'login' as url_login %}
+                {% url 'authentication:home' as url_login %}
                 {% bootstrap_button "Retour" button_type="link" button_class="btn-primary m-2 mt-4" href=url_login%}
                 {% bootstrap_button "S'inscrire" button_type="submit" button_class="btn-primary m-2 mt-4" %}
             </form>
