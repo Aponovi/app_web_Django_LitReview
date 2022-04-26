@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% block content %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% include 'forum/ticket_card.html' with ticket=form.review.ticket with_edit=False %}
+                {% block ticket_card %}
+                {% endblock %}
+
+
+        {{form.as_p}}
+
+        {% bootstrap_button "Envoyer" button_type="submit" button_class="btn-primary m-2 mt-4" %}
+    </form>
+{% endblock content %}

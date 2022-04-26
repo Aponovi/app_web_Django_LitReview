@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% block content %}
+
+<div class="row justify-content-center">
+        <div class="col-sm-1">
+          </div>
+    <div class="col-sm-3">
+        {% bootstrap_button "Demander une critique" button_type="link" button_class="btn-primary m-2 mt-4" href="ticket"%}
+    </div>
+    <div class="col-sm-3">
+        {% bootstrap_button "Créer une critique" button_type="link" button_class="btn-primary m-2 mt-4" href="critique"%}
+    </div>
+</div>
+
+<ul>
+{% for ticket in tickets %}
+
+<div class="row justify-content-center">
+    <div class="card w-50">
+
+        <div class="row">
+            <div class="col-sm-7">
+                {% if ticket.user.username == user.username %}
+                Vous avez demandé une critique
+                {% else %}
+                {{ticket.user.username}} a demandé une critique
+                {% endif %}
+            </div>
+            <div class="col-sm-5" style="text-align: end">
+                {{ticket.time_created}}
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-sm-1">
+                </div>
+                <img class="card-img w-25 col-sm-6" src={{ticket.image.url}} alt="Couverture du livre">
+
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Titre : {{ticket.title}}</h5>
+                <p class="card-text">Description : {{ticket.description}}</p>
+            </div>
+    <div class="col-sm-3">
+        {% bootstrap_button "Créer une critique" button_type="link" button_class="btn-primary m-2 mt-4" href="critique"%}
+    </div>
+        </div>
+    </div>
+</div>
+
+{% empty %}
+    <div style="text-align:center">Vous n'avez pas publié de critique ni de ticket.</div>
+{% endfor %}
+</ul>
+
+{% endblock content %}

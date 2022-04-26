@@ -1,0 +1,42 @@
+{% block ticket_card %}
+
+<div class="row justify-content-center">
+    <div class="card w-50">
+
+        <div class="row">
+            <div class="col-sm-7">
+                {% if ticket.user.id == user.pk %}
+                Vous avez demandé une critique
+                {% else %}
+                {{ticket.user.username}} a demandé une critique
+                {% endif %}
+            </div>
+            <div class="col-sm-5" style="text-align: end">
+                {{ticket.time_created}}
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-sm-1">
+                </div>
+                <img class="card-img w-25 col-sm-6" src={{ticket.image.url}} alt="Couverture du livre">
+
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Titre : {{ticket.title}}</h5>
+                <p class="card-text">Description : {{ticket.description}}</p>
+            </div>
+            <div class="col-sm-3">
+                {% if with_edit %}
+                <a href="{% url 'forum:review' id_ticket=ticket.id %}" class="btn btn-primary m-2 mt-4">Créer une
+                    critique</a>
+                {% endif %}
+                {% if ticket.user.id == user.pk %}
+                <a href="{% url 'forum:ticket' pk=ticket.id %}" class="btn btn-primary m-2 mt-4">Modifier</a>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

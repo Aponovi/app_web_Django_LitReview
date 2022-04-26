@@ -9,3 +9,11 @@ class TicketForm(ModelForm):
     class Meta:
         model = models.Ticket
         fields = ('title', 'description', 'image')
+
+
+class ReviewForm(ModelForm):
+    model = models.Review
+
+    class Meta:
+        model = models.Review
+        fields = ('headline', 'rating', 'body')
