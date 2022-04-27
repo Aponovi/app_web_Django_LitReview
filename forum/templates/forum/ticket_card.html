@@ -25,17 +25,23 @@
                 <h5 class="card-title">Titre : {{ticket.title}}</h5>
                 <p class="card-text">Description : {{ticket.description}}</p>
             </div>
-            <div class="col-sm-3">
-                {% if with_edit %}
-                <a href="{% url 'forum:review' id_ticket=ticket.id %}" class="btn btn-primary m-2 mt-4">Créer une
-                    critique</a>
+            <div class="col-sm-10">
+                {% if ticket.user.id == user.pk %}
+                <a href="{% url 'forum:ticket' pk=ticket.id %}">Modifier</a>
                 {% endif %}
                 {% if ticket.user.id == user.pk %}
-                <a href="{% url 'forum:ticket' pk=ticket.id %}" class="btn btn-primary m-2 mt-4">Modifier</a>
+                <a href="{% url 'forum:ticket_delete' pk=ticket.id %}">Supprimer</a>
                 {% endif %}
-                {% if ticket.user.id == user.pk %}
-                <a href="{% url 'forum:ticket_delete' pk=ticket.id %}" class="btn btn-primary m-2 mt-4">Supprimer</a>
-                {% endif %}
+                <div class="col-sm-12">
+                </div>
+
+                <div class="col-sm-4">
+                    {% if with_edit %}
+                    <a href="{% url 'forum:review' id_ticket=ticket.id %}" class="btn btn-primary m-2 mt-4"
+                       style="align-content:end">Créer une
+                        critique</a>
+                    {% endif %}
+                </div>
             </div>
 
         </div>

@@ -38,19 +38,23 @@ class ReviewCreation(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('forum:flux')
 
 
-class TicketUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class TicketUpdate(LoginRequiredMixin, UpdateView):
     model = Ticket
     fields = ['title', 'description', 'image']
-    template_name_suffix = '_update_form'
-    template_name = 'forum/ticket.html'
+    template_name = 'forum/ticket_update.html'
     success_url = reverse_lazy('forum:flux')
 
+    def get_queryset(self):
+        return self.model.objects.filter(user=self.request.user)
 
-class TicketDelete(LoginRequiredMixin, UserPassesTestMixin,  DeleteView):
+
+class TicketDelete(LoginRequiredMixin,  DeleteView):
     model = Ticket
-    template_name = 'forum/ticket.html'
-    template_name_suffix = "_confirm_delete"
+    template_name = 'forum/ticket_delete.html'
     success_url = reverse_lazy('forum:flux')
+
+    def get_queryset(self):
+        return self.model.objects.filter(user=self.request.user)
 
 
 def response_page(request):
