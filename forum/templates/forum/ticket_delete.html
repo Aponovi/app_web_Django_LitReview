@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% block content %}
+
+
+{% include 'forum/ticket_card.html' with ticket=ticket with_edit=False %}
+                {% block ticket_card %}
+                {% endblock %}
+
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>Voulez-vous supprimer "{{ object }}"?</p>
+    {{ form }}
+    <input type="submit" value="Confirmer">
+</form>
+
+
+{% endblock %}

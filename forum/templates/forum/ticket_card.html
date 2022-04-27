@@ -33,6 +33,9 @@
                 {% if ticket.user.id == user.pk %}
                 <a href="{% url 'forum:ticket' pk=ticket.id %}" class="btn btn-primary m-2 mt-4">Modifier</a>
                 {% endif %}
+                {% if ticket.user.id == user.pk %}
+                <a href="{% url 'forum:ticket_delete' pk=ticket.id %}" class="btn btn-primary m-2 mt-4">Supprimer</a>
+                {% endif %}
             </div>
 
         </div>

@@ -42,6 +42,14 @@ class TicketUpdate(LoginRequiredMixin, UpdateView):
     model = Ticket
     fields = ['title', 'description', 'image']
     template_name_suffix = '_update_form'
+    template_name = 'forum/ticket.html'
+    success_url = reverse_lazy('forum:flux')
+
+
+class TicketDelete(LoginRequiredMixin, DeleteView):
+    model = Ticket
+    template_name = 'forum/ticket.html'
+    success_url = reverse_lazy('forum:flux')
 
 
 def response_page(request):
@@ -55,3 +63,4 @@ class PostsPage(LoginRequiredMixin, ListView):
  #   user = User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
     queryset = Ticket.objects.filter(user__username=User.username).order_by('-time_created')
     paginate_by = '10'
+
