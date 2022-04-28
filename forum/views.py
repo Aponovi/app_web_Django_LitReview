@@ -62,10 +62,13 @@ def response_page(request):
 
 
 class PostsPage(LoginRequiredMixin, ListView):
+    model = Ticket
     template_name = 'forum/posts.html'
     context_object_name = 'tickets'
 
  #   user = User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
-    queryset = Ticket.objects.filter(user__username=User.username).order_by('-time_created')
+  #  queryset = Ticket.objects.filter(user__username=User.username).order_by('-time_created')
     paginate_by = '10'
 
+    def get_queryset(self):
+        return self.model.objects.filter(user=self.request.user)
