@@ -15,10 +15,12 @@
                 <h5 class="card-title">Voulez-vous supprimer le ticket "{{ object.title }}"?</h5>
                 <p class="card-text">La suppression du ticket provoque la suppression de la critique associée.</p>
                 <button type="submit" class="btn btn-light">Confirmer</button>
-
-
             </div>
         </div>
     </div>
 </form>
+<div class="row justify-content-center">
+
+    <a href="/forum/flux" class="btn btn-secondary" style="max-width: 18rem;" role="button">Annuler la suppression</a>
+</div>
 {% endblock %}

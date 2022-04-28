@@ -61,7 +61,7 @@ def response_page(request):
     return HttpResponse('<h1>répondre à un ticket.html</h1>')
 
 
-class PostsPage(LoginRequiredMixin, UserPassesTestMixin, ListView):
+class PostsPage(LoginRequiredMixin, ListView):
     template_name = 'forum/posts.html'
     context_object_name = 'tickets'
 
