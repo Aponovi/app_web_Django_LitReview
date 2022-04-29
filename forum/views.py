@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic import View, CreateView, ListView, UpdateView, DeleteView
 
 # Create your views here.
-from forum.models import Ticket
+from forum.models import Ticket, Review
 from . import forms
 
 
@@ -37,6 +37,12 @@ class ReviewCreation(LoginRequiredMixin, CreateView):
     form_class = forms.ReviewForm
     success_url = reverse_lazy('forum:flux')
 
+    def get_context_data(self, **kwargs):
+        context = super(ReviewCreation, self).get_context_data(**kwargs)
+        if self.kwargs['id_ticket'] is not None:
+            context['ticket'] = Ticket.objects.filter(id=self.kwargs['id_ticket'])
+        return context
+
 
 class TicketUpdate(LoginRequiredMixin, UpdateView):
     model = Ticket
@@ -65,10 +71,11 @@ class PostsPage(LoginRequiredMixin, ListView):
     model = Ticket
     template_name = 'forum/posts.html'
     context_object_name = 'tickets'
-
- #   user = User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
-  #  queryset = Ticket.objects.filter(user__username=User.username).order_by('-time_created')
     paginate_by = '10'
 
     def get_queryset(self):
-        return self.model.objects.filter(user=self.request.user)
+        return self.model.objects.filter(user=self.request.user).order_by('-time_created')
+
+
+
+#    user = User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
