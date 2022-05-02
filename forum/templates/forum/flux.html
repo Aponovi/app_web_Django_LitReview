@@ -22,4 +22,9 @@
 
 {% endfor %}
 
+{% include 'forum/review_card.html' with review=review with_edit=True %}
+                {% block review_card %}
+                {% endblock %}
+
+
 {% endblock content %}

@@ -1,14 +1,14 @@
-from django.contrib.auth import views, logout
+from django.contrib.auth import views
 from django.urls import reverse_lazy
 from django.views import generic
 
 from .forms import SignUpForm
 
 
-class SignUp_page(generic.CreateView):
+class SignUpPageView(generic.CreateView):
+    form_class = SignUpForm
     template_name = 'authentication/subscribe.html'
     success_url = reverse_lazy('authentication:home')
-    form_class = SignUpForm
 
 
 class LoginPageView(views.LoginView):

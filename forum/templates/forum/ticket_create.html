@@ -3,18 +3,17 @@
 {% bootstrap_css %}
 {% block content %}
 
-<br/>
-<br/>
+    <br/>
+    <br/>
 <div class="row justify-content-center">
     <div class="card w-50">
+
+
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{form.as_p}}
             {% bootstrap_button "Envoyer" button_type="submit" button_class="btn-primary m-2 mt-4" %}
-            {% bootstrap_button "Annuler" button_type="link" button_class="btn btn-outline-secondary m-2 mt-4" href="/forum/flux" %}
         </form>
     </div>
 </div>
-
-
 {% endblock content %}
