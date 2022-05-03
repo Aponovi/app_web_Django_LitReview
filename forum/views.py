@@ -1,7 +1,8 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User
-from django.shortcuts import render, get_object_or_404
+from itertools import chain
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Value, CharField
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
@@ -19,9 +20,16 @@ class TicketsListView(LoginRequiredMixin, ListView):
     model = Ticket
     template_name = 'forum/flux.html'
     context_object_name = 'tickets'
-    ordering = ['-time_created']
-#    queryset = Ticket.objects.order_by('-time_created')
     paginate_by = '5'
+
+    def get_context_data(self, **kwargs):
+        tickets = Ticket.objects.all().annotate(content_type=Value("TICKET", CharField()))
+        reviews = Review.objects.all().annotate(content_type=Value("REVIEW", CharField()))
+
+        context = super().get_context_data(**kwargs)
+        context['feeds'] = sorted(chain(tickets, reviews), key=lambda instance: instance.time_created,
+                                  reverse=True)
+        return context
 
 
 class TicketCreationView(LoginRequiredMixin, CreateView):
@@ -35,7 +43,26 @@ class TicketCreationView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class ReviewCreationView(LoginRequiredMixin, CreateView):
+class TicketUpdateView(LoginRequiredMixin, UpdateView):
+    model = Ticket
+    form_class = forms.TicketForm
+    template_name = 'forum/ticket_update.html'
+    success_url = reverse_lazy('forum:flux')
+
+    def get_queryset(self):
+        return self.model.objects.filter(user=self.request.user)
+
+
+class TicketDeleteView(LoginRequiredMixin, DeleteView):
+    model = Ticket
+    template_name = 'forum/ticket_delete.html'
+    success_url = reverse_lazy('forum:flux')
+
+    def get_queryset(self):
+        return self.model.objects.filter(user=self.request.user)
+
+
+class ReviewResponseView(LoginRequiredMixin, CreateView):
     model = Review
     template_name = 'forum/review.html'
     form_class = forms.ReviewForm
@@ -60,27 +87,10 @@ class ReviewCreationView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class TicketUpdateView(LoginRequiredMixin, UpdateView):
-    model = Ticket
-    form_class = forms.TicketForm
-    template_name = 'forum/ticket_update.html'
-    success_url = reverse_lazy('forum:flux')
-
-    def get_queryset(self):
-        return self.model.objects.filter(user=self.request.user)
-
-
-class TicketDeleteView(LoginRequiredMixin, DeleteView):
-    model = Ticket
-    template_name = 'forum/ticket_delete.html'
-    success_url = reverse_lazy('forum:flux')
-
-    def get_queryset(self):
-        return self.model.objects.filter(user=self.request.user)
-
-
-def response_page(request):
-    return HttpResponse('<h1>répondre à un ticket_create.html</h1>')
+class ReviewCreationView(LoginRequiredMixin, CreateView):
+    form_ticket = forms.TicketForm()
+    form_review = forms.ReviewForm()
+    context = {'form_ticket': form_ticket, 'form_review': form_review}
 
 
 class PostsPageView(LoginRequiredMixin, ListView):

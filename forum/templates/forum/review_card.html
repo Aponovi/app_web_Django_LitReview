@@ -1,10 +1,31 @@
 {% block review_card %}
 
+<div class="row justify-content-center">
+    <div class="card w-50">
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+                {% if review.user == user.pk %}
+                    Vous avez publié une critique
+                {% else %}
+                    {{review.user}} a publié une critique
+                {% endif %}
+
+                {{review.headline}}
+                {{review.body}}
+                {{review.time_created}}
 
 
-    {{review.user}
-    {{ticket.title}
-
+            {% include 'forum/ticket_card.html' with ticket=review.ticket with_edit=False %}
+            {% block ticket_card %}
+            {% endblock %}
+        </form>
+    </div>
+</div>
 
 
 {% endblock %}
+
+
+
+

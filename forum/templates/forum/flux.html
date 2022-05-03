@@ -14,17 +14,19 @@
 </div>
 
 
-{% for ticket in tickets %}
-
-{% include 'forum/ticket_card.html' with ticket=ticket with_edit=True %}
-                {% block ticket_card %}
-                {% endblock %}
-
-{% endfor %}
-
-{% include 'forum/review_card.html' with review=review with_edit=True %}
-                {% block review_card %}
-                {% endblock %}
+{% if feeds %}
+    {% for feed in feeds %}
+        {% if feed.content_type == 'TICKET' %}
+            {% include 'forum/ticket_card.html'  with ticket=feed with_edit=True %}
+            {% block ticket_card %}
+            {% endblock %}
+        {% elif feed.content_type == 'REVIEW' %}
+            {% include 'forum/review_card.html' with review=feed %}
+        {% endif %}
+    {% endfor %}
+{% else %}
+    <p>Il n'y a rien à afficher</p>
+{% endif %}
 
 
 {% endblock content %}
