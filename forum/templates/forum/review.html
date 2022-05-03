@@ -12,7 +12,16 @@
             {% block ticket_card %}
             {% endblock %}
 
-            {{form.as_p}}
+
+            {{form.headline.label}}
+            {{form.headline}}
+            {{form.rating.label}}
+            <br/>
+            {{form.rating}}  /  5
+            <br/>
+            {{form.body.label}}
+            {{form.body}}
+
 
             {% bootstrap_button "Envoyer" button_type="submit" button_class="btn-primary m-2 mt-4" %}
         </form>

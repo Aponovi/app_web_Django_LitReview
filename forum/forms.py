@@ -22,6 +22,6 @@ class ReviewForm(ModelForm):
 
         widgets = {
             'headline': forms.TextInput(attrs={'class': 'form-control'}),
-            'rating': forms.RadioSelect(attrs={'class': 'form-control'}),
+#           'rating': forms.CheckboxInput(attrs={'class': 'form-control'}),
             'body': forms.Textarea(attrs={'class': 'form-control'}),
         }

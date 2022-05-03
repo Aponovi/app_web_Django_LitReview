@@ -4,21 +4,21 @@
     <div class="card w-50">
 
         <div class="row">
-            <div class="col-sm-7">
+            <div class="col-sm-7" style="font-style:italic">
                 {% if ticket.user.id == user.pk %}
                 Vous avez demandé une critique
                 {% else %}
                 {{ticket.user.username}} a demandé une critique
                 {% endif %}
             </div>
-            <div class="col-sm-5" style="text-align: end">
+            <div class="col-sm-5" style="text-align: end; font-style:italic">
                 {{ticket.time_created}}
             </div>
 
             <div class="row justify-content-center">
                 <div class="col-sm-1">
                 </div>
-                <img class="card-img w-25 col-sm-6" src={{ticket.image.url}} alt="Couverture du livre">
+                <img class="card-img w-25 col-sm-6" src={{ticket.image.url}} alt="Couverture non disponible">
 
             </div>
             <div class="card-body">
@@ -37,7 +37,6 @@
 
                 <div class="col-sm-4">
                     {% if not ticket.reviews.all and with_edit %}
-                        {{ticket}}
                     <a href="{% url 'forum:review_response' id_ticket=ticket.id %}" class="btn btn-primary m-2 mt-4"
                        style="align-content:end">Répondre une
                         critique</a>

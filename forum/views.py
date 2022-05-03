@@ -29,6 +29,7 @@ class TicketsListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['feeds'] = sorted(chain(tickets, reviews), key=lambda instance: instance.time_created,
                                   reverse=True)
+
         return context
 
 
