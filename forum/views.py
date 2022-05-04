@@ -101,10 +101,8 @@ class ReviewCreationView(LoginRequiredMixin, TemplateView):
         if form_review.is_valid() and form_ticket.is_valid():
             form_ticket.instance.user = self.request.user
             form_review.instance.user = self.request.user
-
             ticket = form_ticket.save(commit=False)
             ticket.save()
-
             review = form_review.save(commit=False)
             review.ticket = form_ticket.save()
             review.save()
