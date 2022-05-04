@@ -2,10 +2,10 @@ from itertools import chain
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Value, CharField
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, UpdateView, DeleteView
+from django.views.generic import CreateView, ListView, UpdateView, DeleteView, TemplateView
 from django.forms import inlineformset_factory
 
 # Create your views here.
@@ -90,71 +90,34 @@ class ReviewResponseView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class ReviewCreationView(LoginRequiredMixin, CreateView):
+class ReviewCreationView(LoginRequiredMixin, TemplateView):
     template_name = 'forum/review_create.html.'
-    form_ticket = forms.TicketForm
-    form_review = forms.ReviewForm
     success_url = reverse_lazy('forum:flux')
 
-    _ticket = None
+    def post(self, request, *args, **kwargs):
+        form_review = ReviewForm(request.POST, prefix="review")
+        form_ticket = TicketForm(request.POST, prefix="ticket")
 
-    @property
-    def ticket(self):
-        if self._ticket is None:
-            self._ticket = get_object_or_404(Ticket.objects.all(), id=self.kwargs['id_ticket'])
-        return self._ticket
+        if form_review.is_valid() and form_ticket.is_valid():
+            form_ticket.instance.user = self.request.user
+            form_review.instance.user = self.request.user
 
-    def manage_creation(self, request, id_ticket):
+            ticket = form_ticket.save(commit=False)
+            ticket.save()
 
-        if id_ticket(self):
-            ticket = self.ticket
-        else:
-            ticket = Ticket()
-        ticket_form = TicketForm(instance=ticket)
+            review = form_review.save(commit=False)
+            review.ticket = form_ticket.save()
+            review.save()
+            return redirect(self.get_success_url())
 
-        ReviewInlineFormSet = inlineformset_factory(Ticket, Review, fields=all())
-        formset = ReviewInlineFormSet(instance=ticket)
+    def get_context_data(self, **kwargs):
+        form_ticket = TicketForm(prefix="ticket")
+        form_review = ReviewForm(prefix="review")
+        return {"form_ticket": form_ticket, "form_review": form_review}
 
-        if request.method == "POST":
-            ticket_form = TicketForm(request.POST)
+    def get_success_url(self):
+        return reverse_lazy('forum:flux')
 
-            if id:
-                ticket_form = TicketForm(request.POST, instance=ticket)
-
-            formset = ReviewInlineFormSet(request.POST, request.FILES)
-
-            if ticket_form.is_valid():
-                created_ticket = ticket_form.save(commit=False)
-                formset = ReviewInlineFormSet(request.POST, request.FILES, instance=created_ticket)
-
-                if formset.is_valid():
-                    created_ticket.save()
-                    formset.save()
-                    return HttpResponseRedirect(created_ticket.get_absolute_url())
-
-        return render("manage_books.html", {
-            "author_form": ticket_form,
-            "formset": formset,
-        })
-
-    # def get_context_data(self, **kwargs):
-    #     form_ticket = TicketForm(prefix="ticket")
-    #     form_review = ReviewForm(prefix="review")
-    #     return {"form_ticket": form_ticket, "form_review": form_review}
-    #
-    # def form_valid(self, form):
-    #     form.instance.user = self.request.user
-    #     return super().form_valid(form)
-    #
-    # def get_queryset(self):
-    #     return self.model.objects.filter(user=self.request.user)
-
-
-    # def get_queryset(self):
-    #     return self.t
-    #         User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
-    #
-    #    user = User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
 
 class PostsPageView(LoginRequiredMixin, ListView):
     model = Ticket
