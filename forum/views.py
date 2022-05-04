@@ -19,6 +19,7 @@ def follow_page(request):
 
 
 class TicketsListView(LoginRequiredMixin, ListView):
+    # Feed the flux page
     model = Ticket
     template_name = 'forum/flux.html'
     context_object_name = 'tickets'
@@ -36,6 +37,7 @@ class TicketsListView(LoginRequiredMixin, ListView):
 
 
 class TicketCreationView(LoginRequiredMixin, CreateView):
+    # Create a ticket
     model = Ticket
     template_name = 'forum/ticket_create.html'
     form_class = forms.TicketForm
@@ -47,6 +49,7 @@ class TicketCreationView(LoginRequiredMixin, CreateView):
 
 
 class TicketUpdateView(LoginRequiredMixin, UpdateView):
+    # Edit a ticket
     model = Ticket
     form_class = forms.TicketForm
     template_name = 'forum/ticket_update.html'
@@ -57,6 +60,7 @@ class TicketUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class TicketDeleteView(LoginRequiredMixin, DeleteView):
+    # Delete a ticket
     model = Ticket
     template_name = 'forum/ticket_delete.html'
     success_url = reverse_lazy('forum:flux')
@@ -66,6 +70,7 @@ class TicketDeleteView(LoginRequiredMixin, DeleteView):
 
 
 class ReviewResponseView(LoginRequiredMixin, CreateView):
+    # create a review in response to a ticket
     model = Review
     template_name = 'forum/review.html'
     form_class = forms.ReviewForm
@@ -91,6 +96,7 @@ class ReviewResponseView(LoginRequiredMixin, CreateView):
 
 
 class ReviewCreationView(LoginRequiredMixin, TemplateView):
+    # Create a review and a ticket in one go
     template_name = 'forum/review_create.html.'
     success_url = reverse_lazy('forum:flux')
     form_review = ReviewForm()
@@ -118,20 +124,25 @@ class ReviewCreationView(LoginRequiredMixin, TemplateView):
     def get_success_url(self):
         return reverse_lazy('forum:flux')
 
-    # def get_queryset(self):
-    #     return self.t
-    #         User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
-    #
-    #    user = User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
-
 
 class PostsPageView(LoginRequiredMixin, ListView):
+    # shows tickets and reviews of logged in user only
     model = Ticket
     template_name = 'forum/posts.html'
     context_object_name = 'tickets'
     paginate_by = '10'
 
-    def get_queryset(self):
-        return self.model.objects.filter(user=self.request.user).order_by('-time_created')
+    # def get_queryset(self):
+    #     return self.model.objects.filter(user=self.request.user).order_by('-time_created')
+
+    def get_context_data(self, **kwargs):
+        tickets = Ticket.objects.filter(user=self.request.user).order_by('-time_created').annotate(content_type=Value("TICKET", CharField()))
+        reviews = Review.objects.filter(user=self.request.user).order_by('-time_created').annotate(content_type=Value("REVIEW", CharField()))
+
+        context = super().get_context_data(**kwargs)
+        context['feeds'] = sorted(chain(tickets, reviews), key=lambda instance: instance.time_created,
+                                  reverse=True)
+
+        return context
 
 #    user = User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
