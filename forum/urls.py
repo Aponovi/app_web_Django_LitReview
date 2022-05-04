@@ -5,7 +5,7 @@ from . import views
 app_name = 'forum'
 urlpatterns = [
     path('flux', views.TicketsListView.as_view(), name='flux'),
-    path('abonnements', views.follow_page, name='follow'),
+    path('abonnements', views.FollowCreationView.as_view(), name='follow'),
     path('ticket/<int:pk>/', views.TicketUpdateView.as_view(), name='ticket'),
     path('ticket/delete/<int:pk>/', views.TicketDeleteView.as_view(), name='ticket_delete'),
     path('ticket', views.TicketCreationView.as_view(), name='ticket_create'),

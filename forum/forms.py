@@ -23,3 +23,11 @@ class ReviewForm(ModelForm):
             'headline': forms.TextInput(attrs={'class': 'form-control'}),
             'body': forms.Textarea(attrs={'class': 'form-control'}),
         }
+
+
+class UserFollowsForm(forms.ModelForm):
+    class Meta:
+        model = models.UserFollows
+        fields = [
+            'followed_user',
+        ]

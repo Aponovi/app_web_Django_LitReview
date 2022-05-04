@@ -3,19 +3,11 @@ from itertools import chain
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Value, CharField
 from django.shortcuts import get_object_or_404, redirect
-from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, TemplateView
-from django.forms import inlineformset_factory
 
-# Create your views here.
-from forum.models import Ticket, Review
-from . import forms
-from .forms import TicketForm, ReviewForm
-
-
-def follow_page(request):
-    return HttpResponse('<h1>Qui je suis! Et surtout qui me suis?</h1>')
+from forum.models import Ticket, Review, UserFollows
+from .forms import TicketForm, ReviewForm, UserFollowsForm
 
 
 class TicketsListView(LoginRequiredMixin, ListView):
@@ -40,7 +32,7 @@ class TicketCreationView(LoginRequiredMixin, CreateView):
     # Create a ticket
     model = Ticket
     template_name = 'forum/ticket_create.html'
-    form_class = forms.TicketForm
+    form_class = TicketForm
     success_url = reverse_lazy('forum:flux')
 
     def form_valid(self, form):
@@ -51,7 +43,7 @@ class TicketCreationView(LoginRequiredMixin, CreateView):
 class TicketUpdateView(LoginRequiredMixin, UpdateView):
     # Edit a ticket
     model = Ticket
-    form_class = forms.TicketForm
+    form_class = TicketForm
     template_name = 'forum/ticket_update.html'
     success_url = reverse_lazy('forum:flux')
 
@@ -73,7 +65,7 @@ class ReviewResponseView(LoginRequiredMixin, CreateView):
     # create a review in response to a ticket
     model = Review
     template_name = 'forum/review.html'
-    form_class = forms.ReviewForm
+    form_class = ReviewForm
     success_url = reverse_lazy('forum:flux')
 
     _ticket = None
@@ -132,17 +124,41 @@ class PostsPageView(LoginRequiredMixin, ListView):
     context_object_name = 'tickets'
     paginate_by = '10'
 
-    # def get_queryset(self):
-    #     return self.model.objects.filter(user=self.request.user).order_by('-time_created')
-
     def get_context_data(self, **kwargs):
-        tickets = Ticket.objects.filter(user=self.request.user).order_by('-time_created').annotate(content_type=Value("TICKET", CharField()))
-        reviews = Review.objects.filter(user=self.request.user).order_by('-time_created').annotate(content_type=Value("REVIEW", CharField()))
-
         context = super().get_context_data(**kwargs)
+        tickets = Ticket.objects.filter(user=self.request.user).order_by('-time_created').annotate(
+            content_type=Value("TICKET", CharField()))
+        reviews = Review.objects.filter(user=self.request.user).order_by('-time_created').annotate(
+            content_type=Value("REVIEW", CharField()))
         context['feeds'] = sorted(chain(tickets, reviews), key=lambda instance: instance.time_created,
                                   reverse=True)
 
         return context
 
+
 #    user = User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
+class FollowCreationView(LoginRequiredMixin, CreateView):
+    model = UserFollows
+    template_name = 'forum/abonnements.html'
+    form_class = UserFollowsForm
+    success_url = reverse_lazy('forum:flux')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_follows = UserFollows.objects.all().select_related()
+        context["current_user"] = self.request.user
+        context["following_users"] = sorted(
+            user_follows,
+            key=lambda user: user.user.username,
+            reverse=False,
+        )
+        context["followed_users"] = sorted(
+            user_follows,
+            key=lambda user: user.followed_user.username,
+            reverse=False,
+        )
+        return context
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
