@@ -7,10 +7,10 @@
             {% csrf_token %}
             <div class="row">
                 <div class="col-sm-7" style="font-style:italic">
-                    {% if review.user == user.pk %}
+                    {% if review.user.id == user.pk %}
                     Vous avez publié une critique
                     {% else %}
-                    {{review.user}} a publié une critique
+                    {{review.user.username}} a publié une critique
                     {% endif %}
                 </div>
                 <div class="col-sm-5" style="text-align: end; font-style:italic">
