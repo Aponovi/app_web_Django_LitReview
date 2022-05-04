@@ -2,14 +2,16 @@ from itertools import chain
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Value, CharField
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
+from django.forms import inlineformset_factory
 
 # Create your views here.
 from forum.models import Ticket, Review
 from . import forms
+from .forms import TicketForm, ReviewForm
 
 
 def follow_page(request):
@@ -89,10 +91,70 @@ class ReviewResponseView(LoginRequiredMixin, CreateView):
 
 
 class ReviewCreationView(LoginRequiredMixin, CreateView):
-    form_ticket = forms.TicketForm()
-    form_review = forms.ReviewForm()
-    context = {'form_ticket': form_ticket, 'form_review': form_review}
+    template_name = 'forum/review_create.html.'
+    form_ticket = forms.TicketForm
+    form_review = forms.ReviewForm
+    success_url = reverse_lazy('forum:flux')
 
+    _ticket = None
+
+    @property
+    def ticket(self):
+        if self._ticket is None:
+            self._ticket = get_object_or_404(Ticket.objects.all(), id=self.kwargs['id_ticket'])
+        return self._ticket
+
+    def manage_creation(self, request, id_ticket):
+
+        if id_ticket(self):
+            ticket = self.ticket
+        else:
+            ticket = Ticket()
+        ticket_form = TicketForm(instance=ticket)
+
+        ReviewInlineFormSet = inlineformset_factory(Ticket, Review, fields=all())
+        formset = ReviewInlineFormSet(instance=ticket)
+
+        if request.method == "POST":
+            ticket_form = TicketForm(request.POST)
+
+            if id:
+                ticket_form = TicketForm(request.POST, instance=ticket)
+
+            formset = ReviewInlineFormSet(request.POST, request.FILES)
+
+            if ticket_form.is_valid():
+                created_ticket = ticket_form.save(commit=False)
+                formset = ReviewInlineFormSet(request.POST, request.FILES, instance=created_ticket)
+
+                if formset.is_valid():
+                    created_ticket.save()
+                    formset.save()
+                    return HttpResponseRedirect(created_ticket.get_absolute_url())
+
+        return render("manage_books.html", {
+            "author_form": ticket_form,
+            "formset": formset,
+        })
+
+    # def get_context_data(self, **kwargs):
+    #     form_ticket = TicketForm(prefix="ticket")
+    #     form_review = ReviewForm(prefix="review")
+    #     return {"form_ticket": form_ticket, "form_review": form_review}
+    #
+    # def form_valid(self, form):
+    #     form.instance.user = self.request.user
+    #     return super().form_valid(form)
+    #
+    # def get_queryset(self):
+    #     return self.model.objects.filter(user=self.request.user)
+
+
+    # def get_queryset(self):
+    #     return self.t
+    #         User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
+    #
+    #    user = User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
 
 class PostsPageView(LoginRequiredMixin, ListView):
     model = Ticket

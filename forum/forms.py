@@ -11,7 +11,7 @@ class TicketForm(ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
-#            'image': forms.ImageField(attrs={'class': 'form-control'}),
+            #            'image': forms.ImageField(attrs={'class': 'form-control'}),
         }
 
 
@@ -22,6 +22,6 @@ class ReviewForm(ModelForm):
 
         widgets = {
             'headline': forms.TextInput(attrs={'class': 'form-control'}),
-#           'rating': forms.CheckboxInput(attrs={'class': 'form-control'}),
+            #           'rating': forms.CheckboxInput(attrs={'class': 'form-control'}),
             'body': forms.Textarea(attrs={'class': 'form-control'}),
         }
