@@ -38,16 +38,29 @@
                 </h5>
                 <p>Commentaire : {{review.body}}</p>
             </div>
+            <div class="col-sm-10">
+                {% if review.user.id == user.pk %}
+                <small><a href="{% url 'forum:review_update' pk=review.id%}">Modifier</a></small>
+                {% endif %}
+                {% if review.user.id == user.pk %}
+                <small><a href="{% url 'forum:review_delete' pk=review.id %}">Supprimer</a></small>
+                {% endif %}
+                <div class="col-sm-12">
+                </div>
+
+            </div>
+
             <div class="row">
                 {% include 'forum/ticket_card.html' with ticket=review.ticket with_edit=False %}
                 {% block ticket_card %}
                 {% endblock %}
                 <br/>
             </div>
-
-        </form>
-        <br/>
     </div>
+
+    </form>
+    <br/>
+</div>
 </div>
 
 

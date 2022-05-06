@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% block content %}
+
+<br/>
+<br/>
+<div class="row justify-content-center">
+    {% include 'forum/ticket_card.html' with ticket=review.ticket with_edit=False %}
+    {% block ticket_card %}
+    {% endblock %}
+    <br/>
+    <div class="card w-50 p-4">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>{{form.headline.label}} : {{form.headline}}</div>
+            <br/>
+            <div>{{form.rating.label}} : {{form.rating}} / 5</div>
+            <br/>
+            <div>{{form.body.label}} : {{form.body}}</div>
+            {% bootstrap_button "Envoyer" button_type="submit" button_class="btn-primary m-2 mt-4" %}
+            {% bootstrap_button "Annuler" button_type="link" button_class="btn btn-outline-secondary m-2 mt-4" href="/forum/flux" %}
+        </form>
+    </div>
+</div>
+
+
+{% endblock content %}

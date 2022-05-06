@@ -1,7 +1,7 @@
 from itertools import chain
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Value, CharField
+from django.db.models import Value, CharField, Q
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, TemplateView
@@ -10,18 +10,69 @@ from forum.models import Ticket, Review, UserFollows
 from .forms import TicketForm, ReviewForm, UserFollowsForm
 
 
+# user = User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
+
 class TicketsListView(LoginRequiredMixin, ListView):
     # Feed the flux page
     model = Ticket
     template_name = 'forum/flux.html'
     context_object_name = 'tickets'
-    paginate_by = '5'
 
     def get_context_data(self, **kwargs):
-        tickets = Ticket.objects.all().annotate(content_type=Value("TICKET", CharField()))
-        reviews = Review.objects.all().annotate(content_type=Value("REVIEW", CharField()))
+        # Get users.id followed by request.user
+        followed_users_id = UserFollows.objects.filter(
+            user=self.request.user
+        ).values_list("followed_user_id", flat=True)
+
+        # Get reviews make by user followed
+        reviews_followed_users = (
+            Review.objects.filter(
+                Q(user__in=followed_users_id) | Q(user=self.request.user.id)
+            ).select_related()
+        ).annotate(content_type=Value("REVIEW", CharField()))
+
+        # Get tickets make by user followed
+        tickets_followed_users = (
+            Ticket.objects.filter(
+                Q(user__in=followed_users_id) | Q(user=self.request.user.id)
+            ).select_related()
+        ).annotate(content_type=Value("TICKET", CharField()))
+
+        # Get users.id who follow request.user
+        following_users_id = UserFollows.objects.filter(
+            followed_user=self.request.user
+        ).values_list("user_id", flat=True)
+
+        # Get reviews make by them for request.user tickets
+        reviews_following_users = (
+            Review.objects.filter(
+                Q(user__in=following_users_id) & Q(ticket__user=self.request.user.id)
+            )
+                .select_related()
+                .annotate(content_type=Value("REVIEW", CharField()))
+        )
 
         context = super().get_context_data(**kwargs)
+        context['feeds'] = sorted(chain(reviews_followed_users,
+                                        tickets_followed_users,
+                                        reviews_following_users, ), key=lambda instance: instance.time_created,
+                                  reverse=True)
+
+        return context
+
+
+class PostsPageView(LoginRequiredMixin, ListView):
+    # Display tickets and reviews of logged in user only
+    model = Ticket
+    template_name = 'forum/posts.html'
+    context_object_name = 'tickets'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tickets = Ticket.objects.filter(user=self.request.user).order_by('-time_created').annotate(
+            content_type=Value("TICKET", CharField()))
+        reviews = Review.objects.filter(user=self.request.user).order_by('-time_created').annotate(
+            content_type=Value("REVIEW", CharField()))
         context['feeds'] = sorted(chain(tickets, reviews), key=lambda instance: instance.time_created,
                                   reverse=True)
 
@@ -62,7 +113,7 @@ class TicketDeleteView(LoginRequiredMixin, DeleteView):
 
 
 class ReviewResponseView(LoginRequiredMixin, CreateView):
-    # create a review in response to a ticket
+    # Create a review in response to a ticket
     model = Review
     template_name = 'forum/review.html'
     form_class = ReviewForm
@@ -117,48 +168,59 @@ class ReviewCreationView(LoginRequiredMixin, TemplateView):
         return reverse_lazy('forum:flux')
 
 
-class PostsPageView(LoginRequiredMixin, ListView):
-    # shows tickets and reviews of logged in user only
-    model = Ticket
-    template_name = 'forum/posts.html'
-    context_object_name = 'tickets'
-    paginate_by = '10'
+class ReviewUpdateView(LoginRequiredMixin, UpdateView):
+    # Edit a review
+    model = Review
+    form_class = ReviewForm
+    template_name = 'forum/review_update.html'
+    success_url = reverse_lazy('forum:flux')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        tickets = Ticket.objects.filter(user=self.request.user).order_by('-time_created').annotate(
-            content_type=Value("TICKET", CharField()))
-        reviews = Review.objects.filter(user=self.request.user).order_by('-time_created').annotate(
-            content_type=Value("REVIEW", CharField()))
-        context['feeds'] = sorted(chain(tickets, reviews), key=lambda instance: instance.time_created,
-                                  reverse=True)
-
-        return context
+    def get_queryset(self):
+        return self.model.objects.filter(user=self.request.user)
 
 
-#    user = User.objects.all().prefetch_related('ticket_set', 'ticket_set__review_set')
+class ReviewDeleteView(LoginRequiredMixin, DeleteView):
+    # Delete a review
+    model = Review
+    template_name = 'forum/review_delete.html'
+    success_url = reverse_lazy('forum:flux')
+
+    def get_queryset(self):
+        return self.model.objects.filter(user=self.request.user)
+
+
 class FollowCreationView(LoginRequiredMixin, CreateView):
+    # Allowed follows and display lists of followers and followed
     model = UserFollows
     template_name = 'forum/abonnements.html'
     form_class = UserFollowsForm
-    success_url = reverse_lazy('forum:flux')
+    success_url = reverse_lazy('forum:follow')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user_follows = UserFollows.objects.all().select_related()
+        user_following = UserFollows.objects.all().select_related()
+        user_followed = UserFollows.objects.all().select_related()
+
         context["current_user"] = self.request.user
         context["following_users"] = sorted(
-            user_follows,
+            user_following,
             key=lambda user: user.user.username,
             reverse=False,
         )
         context["followed_users"] = sorted(
-            user_follows,
+            user_followed,
             key=lambda user: user.followed_user.username,
             reverse=False,
         )
         return context
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+
+class FollowDeleteView(LoginRequiredMixin, DeleteView):
+    # Delete the followed
+    model = UserFollows
+    template_name = 'forum/désabonnement.html'
+    success_url = reverse_lazy('forum:follow')
