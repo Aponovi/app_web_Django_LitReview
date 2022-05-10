@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="card w-50">
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h5>Livre / Article</h5>
+            {{form_ticket.as_p}}
+            <h5>Critique</h5>
+            {{form_review.as_p}}
+            {% bootstrap_button "Envoyer" button_type="submit" button_class="btn-primary m-2 mt-4" %}
+        </form>
+        {% endblock content %}
+    </div>
+</div>

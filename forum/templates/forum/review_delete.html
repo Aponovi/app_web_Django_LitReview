@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% block content %}
+
+{% include 'forum/review_card.html' %}
+{% block review_card %}
+{% endblock %}
+
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row justify-content-center">
+        <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Voulez-vous supprimer la critique ?</h5>
+                <button type="submit" class="btn btn-light">Confirmer</button>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="row justify-content-center">
+
+    <a href="/forum/flux" class="btn btn-secondary" style="max-width: 18rem;" role="button">Annuler la suppression</a>
+</div>
+{% endblock %}

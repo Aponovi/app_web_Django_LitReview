@@ -1,0 +1,69 @@
+{% extends 'layout.html' %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% block content %}
+<br/>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row justify-content-center">
+        <div class="card w-50">
+            <div class="row">
+                <h5 style="text-align: center">Suivre d'autres utilisateurs</h5>
+                <div class="col-sm-10">
+                    {{form.as_p}}
+                </div>
+                <div class="col-sm-2 mb-2" style="text-align: end">
+                    {% bootstrap_button "Suivre" button_type="submit" button_class="btn-primary" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<br/>
+<br/>
+<div class="row justify-content-center">
+    <div class="card w-50 p-0">
+        <div class="card-header" style="text-align: center">
+            Abonnements
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for user in followed_users %}
+            {% if user.user == current_user %}
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <p class="card-text">{{ user.followed_user }}</p>
+                    </div>
+                    <div class="col-sm-3 pr-0 mr-0" style="text-align: end">
+                        <a href="{% url 'forum:follow_delete' pk=user.id %}" class=" btn btn-danger btn-sm">Se désabonner</a>
+                    </div>
+                </div>
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<br/>
+
+<div class="row justify-content-center">
+    <div class="card w-50 p-0">
+        <div class="card-header" style="text-align: center">
+            Abonnés
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for user in following_users %}
+            {% if user.followed_user == current_user %}
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <p class="card-text">{{ user.user }}</p>
+                    </div>
+                </div>
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock content %}

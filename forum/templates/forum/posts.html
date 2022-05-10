@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% block content %}
+
+<div class="row justify-content-center">
+        <div class="col-sm-1">
+          </div>
+    <div class="col-sm-3">
+        {% bootstrap_button "Demander une critique" button_type="link" button_class="btn-primary m-2 mt-4" href="ticket" %}
+    </div>
+    <div class="col-sm-3">
+        {% bootstrap_button "Créer une critique" button_type="link" button_class="btn-primary m-2 mt-4" href="critique" %}
+    </div>
+</div>
+
+
+{% if feeds %}
+    {% for feed in feeds %}
+        {% if feed.content_type == 'TICKET' %}
+            {% include 'forum/ticket_card.html'  with ticket=feed with_edit=True %}
+            {% block ticket_card %}
+            {% endblock %}
+        {% elif feed.content_type == 'REVIEW' %}
+            {% include 'forum/review_card.html' with review=feed %}
+        {% endif %}
+    {% endfor %}
+{% else %}
+    <div style="text-align:center">Vous n'avez pas publié de critique ni de ticket.</div>
+{% endif %}
+
+{% endblock content %}

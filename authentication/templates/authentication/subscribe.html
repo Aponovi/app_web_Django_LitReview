@@ -1,0 +1,51 @@
+{% extends 'layout.html' %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="card text-center m-0 p-0 mt-5" style="width: 35%;">
+        <div class="card-header">
+            <h1>Inscrivez-vous</h1>
+        </div>
+        <div class="user-card text-center justify-content-center">
+            <form action="" method="POST" class="form">
+                {% csrf_token %}
+                <label class="form-label">{{ form.username.label }}</label>
+                {{ form.username }}
+                {% for error in form.username.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+                <label class="form-label">{{ form.password1.label }}</label>
+                {{ form.password1 }}
+                {% for error in form.password1.errors %}
+                <p>{{ error }}</p>
+                {{ form.password1.help_text }}
+                {% endfor %}
+                <label class="form-label">{{ form.password2.label }}</label>
+                {{ form.password2 }}
+                {% for error in form.password2.errors %}
+                <p>{{ error }}</p>
+                {{ form.password2.help_text }}
+                {% endfor %}
+                {% url 'authentication:home' as url_login %}
+                {% bootstrap_button "Retour" button_type="link" button_class="btn-primary m-2 mt-4" href=url_login%}
+                {% bootstrap_button "S'inscrire" button_type="submit" button_class="btn-primary m-2 mt-4" %}
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+<!--        var form_fields = document.getElementById('id_username')-->
+<!--        form_fields.placeholder='Nom d\'utilisateur';-->
+<!--        form_fields.className += ' form-control'-->
+<!--        form_fields= document.getElementById('id_password1')-->
+<!--        form_fields.placeholder='Mot de passe';-->
+<!--        form_fields.className += ' form-control'-->
+<!--        form_fields= document.getElementById('id_password2')-->
+<!--        form_fields.placeholder='Confirmer mot de passe';-->
+<!--        form_fields.className += ' form-control'-->
+
+</script>
+{% endblock content %}
+

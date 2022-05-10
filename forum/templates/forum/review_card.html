@@ -1,0 +1,71 @@
+{% block review_card %}
+
+<div class="row justify-content-center">
+    <div class="card w-50">
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-sm-7" style="font-style:italic">
+                    {% if review.user.id == user.pk %}
+                    Vous avez publié une critique
+                    {% else %}
+                    {{review.user.username}} a publié une critique
+                    {% endif %}
+                </div>
+                <div class="col-sm-5" style="text-align: end; font-style:italic">
+                    {{review.time_created}}
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <h5>Titre : {{review.headline}} -
+                    {% if review.rating >= 1 %}
+                    ★
+                    {% endif %}
+                    {% if review.rating >= 2 %}
+                    ★
+                    {% endif %}
+                    {% if review.rating >= 3 %}
+                    ★
+                    {% endif %}
+                    {% if review.rating >= 4 %}
+                    ★
+                    {% endif %}
+                    {% if review.rating == 5 %}
+                    ★
+                    {% endif %}
+                </h5>
+                <p>Commentaire : {{review.body}}</p>
+            </div>
+            <div class="col-sm-10">
+                {% if review.user.id == user.pk %}
+                <small><a href="{% url 'forum:review_update' pk=review.id%}">Modifier</a></small>
+                {% endif %}
+                {% if review.user.id == user.pk %}
+                <small><a href="{% url 'forum:review_delete' pk=review.id %}">Supprimer</a></small>
+                {% endif %}
+                <div class="col-sm-12">
+                </div>
+
+            </div>
+
+            <div class="row">
+                {% include 'forum/ticket_card.html' with ticket=review.ticket with_edit=False %}
+                {% block ticket_card %}
+                {% endblock %}
+                <br/>
+            </div>
+    </div>
+
+    </form>
+    <br/>
+</div>
+</div>
+
+
+{% endblock %}
+
+
+
+

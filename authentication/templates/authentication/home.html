@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'layout.html' %}
 {% load bootstrap5 %}
 {% bootstrap_css %}
 {% block content %}
@@ -11,8 +11,8 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Inscrivez-vous maintenant</h5>
-                {% url 'subscribe' as url_subscribe %}
-                {% bootstrap_button "S'inscrire" button_type="link" button_class="btn-primary m-2 mt-4" href=url_subscribe%}
+                {% url 'authentication:subscribe' as url_subscribe %}
+                {% bootstrap_button "S'inscrire" button_type="link" button_class="btn-primary m-2 mt-4" href=url_subscribe %}
             </div>
         </div>
     </div>
@@ -22,7 +22,7 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Connectez-vous</h5>
-                <form method="post">
+                <form method="POST">
                     {% csrf_token %}
                     {{ form.as_p }}
                     {% bootstrap_button "Se connecter" button_type="submit" button_class="btn-primary m-2 mt-4" %}
