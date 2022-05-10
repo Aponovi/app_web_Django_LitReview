@@ -141,7 +141,6 @@ class ReviewResponseView(LoginRequiredMixin, CreateView):
 class ReviewCreationView(LoginRequiredMixin, TemplateView):
     # Create a review and a ticket in one go
     template_name = 'forum/review_create.html.'
-    success_url = reverse_lazy('forum:flux')
     form_review = ReviewForm()
     form_ticket = TicketForm()
 
@@ -195,6 +194,11 @@ class FollowCreationView(LoginRequiredMixin, CreateView):
     template_name = 'forum/abonnements.html'
     form_class = UserFollowsForm
     success_url = reverse_lazy('forum:follow')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         form.instance.user = self.request.user

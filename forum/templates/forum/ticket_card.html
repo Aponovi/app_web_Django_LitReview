@@ -18,8 +18,9 @@
             <div class="row justify-content-center">
                 <div class="col-sm-1">
                 </div>
+                {% if ticket.image %}
                 <img class="card-img w-25 col-sm-6" src={{ticket.image.url}} alt="Couverture non disponible">
-
+                {% endif %}
             </div>
             <div class="card-body">
                 <h5 class="card-title">Titre : {{ticket.title}}</h5>

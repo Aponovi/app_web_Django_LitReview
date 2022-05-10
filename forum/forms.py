@@ -1,11 +1,12 @@
+from django.contrib.auth.forms import UserModel
 from django.forms import ModelForm
 from django import forms
-from . import models
+from forum.models import Ticket, Review, UserFollows
 
 
 class TicketForm(ModelForm):
     class Meta:
-        model = models.Ticket
+        model = Ticket
         fields = ('title', 'description', 'image')
 
         widgets = {
@@ -16,7 +17,7 @@ class TicketForm(ModelForm):
 
 class ReviewForm(ModelForm):
     class Meta:
-        model = models.Review
+        model = Review
         fields = ('headline', 'rating', 'body')
 
         widgets = {
@@ -24,10 +25,21 @@ class ReviewForm(ModelForm):
             'body': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['rating'].widget = forms.RadioSelect(choices=self.Meta.model.RATING_CHOICES)
 
-class UserFollowsForm(forms.ModelForm):
+
+class UserFollowsForm(ModelForm):
     class Meta:
-        model = models.UserFollows
+        model = UserFollows
         fields = [
             'followed_user',
         ]
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
+        self.fields['followed_user'].queryset = UserModel.objects.exclude(username=user.username)
+
