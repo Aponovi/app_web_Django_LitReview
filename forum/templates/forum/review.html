@@ -18,6 +18,9 @@
             {{form.rating.label}}
             <br/>
             {{form.rating}}  /  5
+            {% include 'forum/rating.html' %}
+            {% block rating_card %}
+            {% endblock %}
             <br/>
             {{form.body.label}}
             {{form.body}}
