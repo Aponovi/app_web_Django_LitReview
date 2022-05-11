@@ -24,7 +24,7 @@
             </div>
             <div class="card-body">
                 <h5 class="card-title">Titre : {{ticket.title}}</h5>
-                <p class="card-text">Description : {{ticket.description}}</p>
+                <p class="card-text">Description : {{ticket.description |linebreaksbr}}</p>
             </div>
             <div class="col-sm-10">
                 {% if ticket.user.id == user.pk %}

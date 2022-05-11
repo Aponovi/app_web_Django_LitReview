@@ -36,7 +36,7 @@
                     ★
                     {% endif %}
                 </h5>
-                <p>Commentaire : {{review.body}}</p>
+                <p>Commentaire : {{review.body |linebreaksbr}}</p>
             </div>
             <div class="col-sm-10">
                 {% if review.user.id == user.pk %}

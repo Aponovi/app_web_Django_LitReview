@@ -8,27 +8,29 @@
         <div class="card-header">
             <h1>Inscrivez-vous</h1>
         </div>
+        <br/>
         <div class="user-card text-center justify-content-center">
             <form action="" method="POST" class="form">
                 {% csrf_token %}
-                <label class="form-label">{{ form.username.label }}</label>
+                <label class="form-control">{{ form.username.label }}</label>
                 {{ form.username }}
                 {% for error in form.username.errors %}
                 <p>{{ error }}</p>
                 {% endfor %}
-                <label class="form-label">{{ form.password1.label }}</label>
+                <label class="form-control">{{ form.password1.label }}</label>
                 {{ form.password1 }}
                 {% for error in form.password1.errors %}
                 <p>{{ error }}</p>
                 {{ form.password1.help_text }}
                 {% endfor %}
-                <label class="form-label">{{ form.password2.label }}</label>
+                <label class="form-control">{{ form.password2.label }}</label>
                 {{ form.password2 }}
                 {% for error in form.password2.errors %}
                 <p>{{ error }}</p>
                 {{ form.password2.help_text }}
                 {% endfor %}
                 {% url 'authentication:home' as url_login %}
+                <br/>
                 {% bootstrap_button "Retour" button_type="link" button_class="btn-primary m-2 mt-4" href=url_login%}
                 {% bootstrap_button "S'inscrire" button_type="submit" button_class="btn-primary m-2 mt-4" %}
             </form>
