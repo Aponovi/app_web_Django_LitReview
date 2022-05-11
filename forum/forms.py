@@ -36,6 +36,10 @@ class UserFollowsForm(ModelForm):
         fields = [
             'followed_user',
         ]
+    followed_user = forms.ModelChoiceField(
+        queryset=None,
+        label="Suivre l'utilisateur :",
+    )
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
