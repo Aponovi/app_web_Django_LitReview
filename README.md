@@ -28,9 +28,9 @@ Cette API exécutable localement peut être installée en suivant les étapes d�
 1. Cloner ce dépôt de code à l'aide de la commande `$ git clone https://github.com/Aponovi/litreview.git` (vous pouvez également télécharger le code [en temps qu'archive zip](https://github.com/Aponovi/litreview/archive/refs/heads/master.zip))
 2. Rendez-vous depuis un terminal à la racine du répertoire litreview avec la commande `$ cd litreview`
 3. Installez les dépendances du projet à l'aide de la commande `pipenv install`
-5. Démarrer le serveur avec `pipenv run python manage.py runserver`
+4. Démarrer le serveur avec `pipenv run python manage.py runserver`
 
-Les étapes 1 à 4 ne sont requises que pout l'installation initiale.Pour les lancements ultérieurs du serveur, il suffit d'exécuter l'étape 5 à partir du répertoire racine du projet.
+Les étapes 1 à 3 ne sont requises que pout l'installation initiale.Pour les lancements ultérieurs du serveur, il suffit d'exécuter l'étape 4 à partir du répertoire racine du projet.
 
 ### Installation et exécution de l'application sans pipenv (avec venv et pip)
 
