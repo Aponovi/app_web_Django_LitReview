@@ -21,7 +21,7 @@ Elle présente deux cas d’utilisation principaux :
 
 ## Installation
 
-Cette API exécutable localement peut être installée en suivant les étapes décrites ci-dessous. L'usage de pipenv est recommandé, mais des instuctions utilisant venv et pip sont également fournies plus bas.
+Cette application exécutable localement peut être installée en suivant les étapes décrites ci-dessous. L'usage de pipenv est recommandé, mais des instuctions utilisant venv et pip sont également fournies plus bas.
 
 ### Installation et exécution de l'application avec pipenv
 
